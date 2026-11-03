@@ -19,12 +19,24 @@ app.get('/', (req, res) => {
     console.log('WEBHOOK VERIFIED');
     res.status(200).send(challenge);
   } else {
-    console.log('========Res======');
+    console.log('========Req======');
     console.log(req.body);
     console.log('========Res======');
-    console.log(req.body);
+    console.log(res.body);
     res.status(403).end();
   }
+});
+app.get('/webhook', (req, res) => {
+  // Respond IMMEDIATELY - don't do DB or logs before
+  const challenge = req.query['hub.challenge'];
+  console.log('========Req======');
+  console.log(req.body);
+  console.log('========Res======');
+  console.log(res.body);
+  if (req.query['hub.verify_token'] === VERIFY_TOKEN) {
+    return res.status(200).send(challenge); // fast return
+  }
+  res.sendStatus(403,"Invalid verification token");
 });
 
 // Route for POST requests
